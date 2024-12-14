@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  CI_BUILD: "yes"
-  VSCODE_QUALITY: "stable"
+  VSCODE_QUALITY: stable
   SHOULD_BUILD: "yes"
 
 jobs:
