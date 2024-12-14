@@ -31,11 +31,10 @@ jobs:
       - name: 📦 Build
         working-directory: main
         run: |
-          .\build\build.ps1
-          tar -cvzf ..\Build.tgz .\
+          .\build\build.ps1 -p
 
       - name: 🚀 Publish Release
         uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048 # v2.2.0
         with:
           tag_name: ${{ github.run_number }}
-          files: Build.tgz
+          files: main/build/windows/msi/releasedir/*
