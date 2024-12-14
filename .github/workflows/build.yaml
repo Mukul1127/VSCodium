@@ -3,6 +3,9 @@ name: VSCodium CI
 on:
   workflow_dispatch:
 
+env:
+  VSCODE_QUALITY: stable
+
 jobs:
   compile:
     name: Compile VSCodium
