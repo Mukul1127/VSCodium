@@ -19,9 +19,8 @@ jobs:
           repository: VSCodium/vscodium
           path: main
 
-      - name: 💾 Add Dependencies
+      - name: 💾 Add Sed to Path
         run: |
-          dotnet tool install --global wix WixToolset.Heat
           echo "C:\msys64\usr\bin" >> "$GITHUB_PATH"
 
       - name: ⚙️ Add Patch
