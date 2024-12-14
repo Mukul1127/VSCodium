@@ -19,9 +19,9 @@ jobs:
           repository: VSCodium/vscodium
           path: main
 
-      - name: 💾 Install Sed
+      - name: 💾 Add Sed to Path
         run: |
-          winget install mbuilov.sed
+          echo "C:\msys64\usr\bin" >> "$GITHUB_PATH"
 
       - name: ⚙️ Add Patch
         working-directory: main/patches
