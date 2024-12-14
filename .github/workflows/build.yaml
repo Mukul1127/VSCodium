@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  VSCODE_LATEST: "no"
   VSCODE_QUALITY: "stable"
   SHOULD_BUILD: "yes"
 
@@ -22,21 +21,12 @@ jobs:
       - name: 🩹 Add Patch
         working-directory: main/patches
         run: |
-          curl -LO https://files.catbox.moe/o253l5.patch
-
-      - name: 💾 Install Dependencies
-        run: |
-          echo "None Yet!"
-
-      - name: 📥 Download Repo
-        working-directory: main
-        run: |
-          ./get_repo.sh
+          curl https://files.catbox.moe/o253l5.patch -o 188793.patch
           
       - name: 🔧 Build
         working-directory: main
         run: |
-          ./build.sh
+          ./build/build.sh
 
       - name: 📦 Compress VSCodium artifact
         working-directory: main
