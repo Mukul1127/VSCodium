@@ -31,12 +31,14 @@ jobs:
           ./get_repo.sh
 
       - name: 🔍 Check PR or cron
+        working-directory: main
         env:
           GENERATE_ASSETS: true
         run: |
           ./check_cron_or_pr.sh
 
       - name: 🔍 Check existing VSCodium tags/releases
+        working-directory: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CHECK_ALL: "yes"
