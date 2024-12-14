@@ -19,8 +19,9 @@ jobs:
           repository: VSCodium/vscodium
           path: main
 
-      - name: 💾 Add Sed to Path
+      - name: 💾 Add Dependencies
         run: |
+          dotnet tool install --global wix WixToolset.Heat
           echo "C:\msys64\usr\bin" >> "$GITHUB_PATH"
 
       - name: ⚙️ Add Patch
@@ -32,11 +33,11 @@ jobs:
         working-directory: main
         run: |
           .\build\build.ps1 -p
-          Compress-Archive -Path . -DestinationPath .\zipped.zip
+          7z a ..\archive.7z . -mx=9
 
       - name: 🚀 Publish Release
         working-directory: main
         run: |
-          gh release create gh-actions-run${{ github.run_number }} .\zipped.zip -R ${{ github.repository }}
+          gh release create gh-actions-run${{ github.run_number }} ..\archive.7z -R ${{ github.repository }}
         env:
           GH_TOKEN: ${{ github.token }}
