@@ -8,9 +8,46 @@ env:
   SHOULD_BUILD: "yes"
 
 jobs:
+  check:
+    name: Check Versions
+    runs-on: ubuntu-24.04
+    outputs:
+      MS_COMMIT: ${{ env.MS_COMMIT }}
+      MS_TAG: ${{ env.MS_TAG }}
+      RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+      SHOULD_BUILD: ${{ env.SHOULD_BUILD }}
+      SHOULD_DEPLOY: ${{ env.SHOULD_DEPLOY }}
+
+    steps:
+      - name: 🚚 Check out the Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: VSCodium/vscodium
+          path: main
+
+      - name: 📥 Download Repo
+        working-directory: main
+        run: |
+          ./get_repo.sh
+
+      - name: 🔍 Check PR or cron
+        env:
+          GENERATE_ASSETS: true
+        run: |
+          ./check_cron_or_pr.sh
+
+      - name: 🔍 Check existing VSCodium tags/releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHECK_ALL: "yes"
+        run: |
+          ./check_tags.sh
+
   compile:
     name: Compile VSCodium
     runs-on: ubuntu-24.04
+    needs:
+      - check
     steps:
       - name: 🚚 Check out the Repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -58,6 +95,7 @@ jobs:
     permissions:
       contents: write
     needs:
+      - check
       - compile
     defaults:
       run:
