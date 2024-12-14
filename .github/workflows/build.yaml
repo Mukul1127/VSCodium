@@ -1,0 +1,85 @@
+name: VSCodium CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  compile:
+    name: Compile VSCodium
+    runs-on: ubuntu-24.04
+    steps:
+      - name: 🚚 Check out the Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: VSCodium/vscodium
+          path: main
+
+      - name: 🩹 Add Patch
+        working-directory: main/patches
+        run: |
+          curl -LO https://files.catbox.moe/o253l5.patch
+
+      - name: 💾 Install Dependencies
+        run: |
+          echo "None Yet!"
+
+      - name: 🔧 Build
+        working-directory: main
+        run: |
+          ./get_repo.sh
+          ./build.sh
+
+      - name: 📦 Compress VSCodium artifact
+        run: |
+          find vscode -type f -not -path "*/node_modules/*" -not -path "vscode/.build/node/*" -not -path "vscode/.git/*" > vscode.txt
+          echo "vscode/.build/extensions/node_modules" >> vscode.txt
+          echo "vscode/.git" >> vscode.txt
+          tar -czf vscode.tar.gz -T vscode.txt
+
+      - name: 🚀 Upload VSCodium Tree
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: vscode
+          path: ./vscode.tar.gz
+          retention-days: 1
+
+  package:
+    name: Package VSCodium
+    runs-on: windows-2022
+    permissions:
+      contents: write
+    needs:
+      - compile
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: 🚚 Check out the Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: VSCodium/vscodium
+          path: main
+
+      - name: 🩹 Add Patch
+        working-directory: main/patches
+        run: |
+          curl -LO https://files.catbox.moe/o253l5.patch
+
+      - name: 📥 Download vscode artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode
+
+      - name: 📦 Prepare assets
+        working-directory: main
+        run: |
+          ./package_windows.sh
+          ./prepare_assets.sh
+          7z a archive.7z .\assets\
+
+      - name: 🚀 Publish Release
+        working-directory: main
+        run: |
+          gh release create gh-actions-run${{ github.run_number }} archive.7z -R ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ github.token }}
