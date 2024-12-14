@@ -63,7 +63,7 @@ jobs:
       - name: 🩹 Add Patch
         working-directory: main/patches
         run: |
-          curl -LO https://files.catbox.moe/o253l5.patch
+          curl https://files.catbox.moe/o253l5.patch -o 188793.patch
 
       - name: 📥 Download vscode artifact
         uses: actions/download-artifact@v4
