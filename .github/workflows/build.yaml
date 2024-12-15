@@ -29,6 +29,14 @@ jobs:
         run: |
           ./build/build.sh
 
+      - name: 📦 Compress VSCodium artifact
+        working-directory: main
+        run: |
+          find vscode -type f -not -path "*/node_modules/*" -not -path "vscode/.build/node/*" -not -path "vscode/.git/*" > vscode.txt
+          echo "vscode/.build/extensions/node_modules" >> vscode.txt
+          echo "vscode/.git" >> vscode.txt
+          tar -czf vscode.tar.gz -T vscode.txt
+
       - name: 📦 Prepare assets
         working-directory: main
         run: |
